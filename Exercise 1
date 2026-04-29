@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo -n "Enter a number: " #Input Number
+read num
+
+if [ "$num" -lt 10 ]; then
+    echo "The number is smaller than 10." #Small Rule
+elif [ "$num" -gt 10 ]; then
+    echo "The number is larger than 10." #Large Rule
+else
+    echo "The number is equal to 10." #Equal Rule
+fi
