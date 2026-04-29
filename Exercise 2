@@ -1,0 +1,24 @@
+#!/bin/bash
+
+echo "Enter 20 numbers:"
+
+for ((i=1; i<=20; i++)) # Loop 20 Inputs
+do
+    read num
+
+    if [ $i -eq 1 ]; then
+        min=$num
+        max=$num
+    else
+        if [ "$num" -lt "$min" ]; then # Rule For Define Min
+            min=$num
+        fi
+
+        if [ "$num" -gt "$max" ]; then # Rule For Define Max
+            max=$num
+        fi
+    fi
+done
+
+echo "Smallest number is: $min"
+echo "Largest number is: $max"
