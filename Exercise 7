@@ -1,0 +1,49 @@
+#!/bin/bash
+#
+#  ping_logger.sh
+#  Reads IP list from file, pings each, logs results to a hostname+date log
+#
+
+# --- Configuration ---
+IP_LIST="/home/user/ip_list.txt"       # File containing destination IPs (one per line)
+LOG_DIR="/home/user/ping_logs"         # Directory to save logs
+PING_COUNT=2                           # Number of ping packets per host
+# --- End Configuration ---
+
+# Create log directory if not exist
+mkdir -p "$LOG_DIR"
+
+# Get hostname and current date for log file naming
+HOSTNAME=$(hostname)
+DATESTAMP=$(date +%Y-%m-%d)
+LOG_FILE="$LOG_DIR/${HOSTNAME}_${DATESTAMP}.log"
+
+echo "==============================" >> "$LOG_FILE"
+echo "Ping log for $HOSTNAME - $DATESTAMP" >> "$LOG_FILE"
+echo "==============================" >> "$LOG_FILE"
+echo "" >> "$LOG_FILE"
+
+# Check if IP list file exists
+if [ ! -f "$IP_LIST" ]; then
+    echo "Error: IP list file not found: $IP_LIST" | tee -a "$LOG_FILE"
+    exit 1
+fi
+
+# Read each line (IP) from file
+while IFS= read -r ip || [ -n "$ip" ]; do
+    # Skip empty lines or comments
+    [[ -z "$ip" || "$ip" =~ ^# ]] && continue
+    
+    echo "Pinging $ip ..."
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - Pinging $ip ..." >> "$LOG_FILE"
+    
+    if ping -c "$PING_COUNT" -W 2 "$ip" > /dev/null 2>&1; then
+        echo "  ✔️  $ip is reachable" | tee -a "$LOG_FILE"
+    else
+        echo "  ❌  $ip is unreachable" | tee -a "$LOG_FILE"
+    fi
+    echo "" >> "$LOG_FILE"
+done < "$IP_LIST"
+
+echo "Ping test completed at $(date '+%Y-%m-%d %H:%M:%S')" >> "$LOG_FILE"
+echo "All results saved in: $LOG_FILE"
