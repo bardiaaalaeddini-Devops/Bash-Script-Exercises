@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Check arguments count
+if [ $# -ne 3 ]; then
+    echo "Usage: $0 <IP> <Username> <Password>"
+    exit 1
+fi
+
+IP=$1
+USERNAME=$2
+PASSWORD=$3
+
+echo "Checking connection to $IP..."
+
+# Ping test
+ping -c 2 $IP > /dev/null 2>&1
+
+if [ $? -eq 0 ]; then
+    echo "Server is reachable. Transferring file..."
+    
+    # Using sshpass for password-based scp
+    sshpass -p "$PASSWORD" scp /etc/passwd "$USERNAME@$IP:/home/user/"
+    
+    if [ $? -eq 0 ]; then
+        echo "File successfully transferred to /home/user/ on $IP"
+    else
+        echo "File transfer failed."
+    fi
+
+else
+    echo "Server is not accessible!"
+fi
