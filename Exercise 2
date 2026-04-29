@@ -22,3 +22,4 @@ done
 
 echo "Smallest number is: $min"
 echo "Largest number is: $max"
+
